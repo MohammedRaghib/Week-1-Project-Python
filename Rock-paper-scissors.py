@@ -11,7 +11,7 @@ scoreboard = {
 
 # Game functionality
 def game(scoreboard):
-    while True:
+    while scoreboard['compscore'] < 10 and scoreboard['playerscore'] < 10:
         # prompts user to make an input
         player_input = input('Enter your choice (type exit to leave): ') 
 
@@ -77,5 +77,13 @@ def game(scoreboard):
             break
         else:
             print('Not a valid input')
+    else:
+        print('')
+        print('Hope you had fun, here are the scores:')
+        print('')
+        print(f'Rounds played: {scoreboard['rounds']}')
+        print(f'Draws: {scoreboard['draws']}')
+        print(f'Your score: {scoreboard['playerscore']}')
+        print(f'Comp score: {scoreboard['compscore']}')
 # Intializes game
 game(scoreboard)
