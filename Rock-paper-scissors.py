@@ -1,4 +1,4 @@
-# prints the game intro
+# the game intro
 print('Lets play rock paper scissors')
 
 # dict to track score
