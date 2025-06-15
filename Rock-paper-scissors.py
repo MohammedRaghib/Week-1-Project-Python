@@ -1,89 +1,107 @@
-# prints the game intro
-print('Lets play rock paper scissors')
+import random
 
-# dict to track score
-scoreboard = {
-    "playerscore": 0,
-    "compscore": 0,
-    "draws": 0,
-    "rounds": 0
+CHOICES = {
+    1: 'Rock',
+    2: 'Paper',
+    3: 'Scissors'
 }
 
-# Game functionality
-def game(scoreboard):
-    while scoreboard['compscore'] < 10 and scoreboard['playerscore'] < 10:
-        # prompts user to make an input
-        player_input = input('Enter your choice (type exit to leave): ') 
+def check(playerchoice, compchoice):
+    comp_choice_name = CHOICES[compchoice]
 
-        # imports the random function from python built in library
-        import random 
-
-        # generates the comp choice which is absolutely randomised
-        # 1 is rock, 2 is paper, 3 is scissors
-        random_number = random.randint(1,3)
-
-        # test to see if random fucntion works:
-        # print(random_number)
-
-        # lowercases player input to make it easier to check
-        pil = player_input.lower()
-
-        # conditional statements to check and respond accordingly to the player and comps choice
-
-        if pil == 'rock' and random_number == 1:
-            print('Tie') # 1a. player and comp choice rock = tie
-            scoreboard['draws'] += 1
-            scoreboard['rounds'] += 1
-        elif pil == 'paper' and random_number == 2:
-            print('Tie') # 1b. player and comp choice paper = tie
-            scoreboard['draws'] += 1
-            scoreboard['rounds'] += 1
-        elif pil == 'scissors' and random_number == 3:
-            print('Tie') # 1c. player and comp choice scissors = tie
-            scoreboard['draws'] += 1
-            scoreboard['rounds'] += 1
-        elif pil == 'rock' and random_number == 3:
-            print('You win') # 2a. player choice rock and comp choice scissors = player wins
-            scoreboard['playerscore'] += 1
-            scoreboard['rounds'] += 1
-        elif pil == 'scissors' and random_number == 1:
-            print('Comp wins') # 2b. player choice scissors and comp choice rock = comp wins
-            scoreboard['compscore'] += 1
-            scoreboard['rounds'] += 1
-        elif pil == 'scissors' and random_number == 2:
-            print('You win') # 3a. player choice scissors and comp choice paper = player wins
-            scoreboard['playerscore'] += 1
-            scoreboard['rounds'] += 1
-        elif pil == 'paper' and random_number == 3:
-            print('Comp wins') # 3b. player choice paper and comp choice scissors = comp wins
-            scoreboard['compscore'] += 1
-            scoreboard['rounds'] += 1
-        elif pil == 'paper' and random_number == 1:
-            print('You win') # 4a. player choice paper and comp choice rock = player wins
-            scoreboard['playerscore'] += 1
-            scoreboard['rounds'] += 1
-        elif pil == 'rock' and random_number == 2:
-            print('Comp wins') # 4b. player choice rock and comp choice paper = comp wins
-            scoreboard['compscore'] += 1
-            scoreboard['rounds'] += 1
-        elif pil == 'exit':
-            print('')
-            print('Hope you had fun, here are the scores:')
-            print('')
-            print(f'Rounds played: {scoreboard['rounds']}')
-            print(f'Draws: {scoreboard['draws']}')
-            print(f'Your score: {scoreboard['playerscore']}')
-            print(f'Comp score: {scoreboard['compscore']}')
-            break
-        else:
-            print('Not a valid input')
+    if playerchoice == compchoice:
+        return {
+            'message': f'Computer also chose {comp_choice_name}. It\'s a Tie!',
+            'player_won': None 
+        }
+    elif (playerchoice == 1 and compchoice == 3) or \
+         (playerchoice == 2 and compchoice == 1) or \
+         (playerchoice == 3 and compchoice == 2):
+        return {
+            'message': f'Computer chose {comp_choice_name}. Player wins!',
+            'player_won': True
+        }
     else:
-        print('')
-        print('Hope you had fun, here are the scores:')
-        print('')
-        print(f'Rounds played: {scoreboard['rounds']}')
-        print(f'Draws: {scoreboard['draws']}')
-        print(f'Your score: {scoreboard['playerscore']}')
-        print(f'Comp score: {scoreboard['compscore']}')
-# Intializes game
-game(scoreboard)
+        return {
+            'message': f'Computer chose {comp_choice_name}. Computer wins!',
+            'player_won': False
+        }
+    
+def display_final_score(score):
+    print("\n--- Final Score ---")
+    for key, value in score.items():
+        if key != 'Winner': 
+            print(f'{key}: {value}')
+    print(f"Overall Winner: {score['Winner']}")
+    print("-------------------")
+
+    play_again = input('Want to play again? [y/n]: ').strip().lower()
+
+    if play_again == 'y':
+        play()
+    else:
+        print("Thanks for playing!")
+
+
+def play():
+    while True:
+        rounds_input = input('Enter the number of rounds to be played: ').strip()
+        try:
+            rounds = int(rounds_input)
+            if rounds <= 0:
+                print("Please enter a positive number of rounds.")
+            else:
+                break
+        except ValueError:
+            print('Invalid input. Please enter a number only.')
+    
+    score = {
+        'Player Wins': 0,
+        'Computer Wins': 0,
+        'Ties': 0, 
+        'Total Rounds Played': 0,
+        'Winner' : ''
+    }
+
+    for _ in range(rounds):
+        print(f"\n--- Round {score['Total Rounds Played'] + 1} of {rounds} ---")
+        
+        while True:
+            player_choice_str = input("Enter your choice (rock, paper, scissors): ").strip().lower()
+            
+            int_player_choice = 0
+            if player_choice_str == 'rock':
+                int_player_choice = 1
+            elif player_choice_str == 'paper':
+                int_player_choice = 2
+            elif player_choice_str == 'scissors':
+                int_player_choice = 3
+            else:
+                print("Invalid input. Please choose 'rock', 'paper', or 'scissors'.")
+                continue
+
+            break 
+
+        comp_choice = random.randint(1, 3) 
+        
+        result = check(playerchoice=int_player_choice, compchoice=comp_choice)
+        print(result['message'])
+
+        score['Total Rounds Played'] += 1
+        if result['player_won'] is True:
+            score['Player Wins'] += 1
+        elif result['player_won'] is False:
+            score['Computer Wins'] += 1
+        else:
+            score['Ties'] += 1
+        
+    if score['Player Wins'] > score['Computer Wins']:
+        score['Winner'] = 'Player'
+    elif score['Computer Wins'] > score['Player Wins']:
+        score['Winner'] = 'Computer'
+    else:
+        score['Winner'] = 'Tie! No overall winner.'
+    
+    display_final_score(score)
+
+play()
